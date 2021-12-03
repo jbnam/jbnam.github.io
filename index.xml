@@ -13,6 +13,8 @@
       
       <guid>http://jbnam.github.io/database/</guid>
       <description>Under Maintenance
+Each list of a data file consists of the following 11 entries:
+$$\big[ N, k, \mathfrak{f}_\chi, r_\chi, L(E,1,\chi), \tau(\chi), e_\chi(N), c, e_\chi(c), e_\chi(-1), T(N, \mathfrak{f}_\chi) \big]$$
 To see the whole data at once, go to my cloud storage directory in Microsoft OneDrive.</description>
     </item>
     
