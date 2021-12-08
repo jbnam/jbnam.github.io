@@ -38,8 +38,27 @@
 <p>where <code>$\text{gcd}$</code> is the greatest common divisor function and <code>$\mathfrak{f}_\chi$</code> is the conductor of <code>$\chi$</code>.</p>
 <p>Each list of a data file consists of the following 11 entries:</p>
 <p><code>$$\big[ N, k, \mathfrak{f}_\chi, r_\chi, L(E,1,\chi), \tau(\chi), e_\chi(N), c, e_\chi(c), e_\chi(-1), T_\chi \big]$$</code></p>
+<p>where</p>
+<ul>
+<li><code>$N$</code> - The conductor of an elliptic curve <code>$E$</code> defined over <code>$\mathbb{Q}$</code></li>
+<li><code>$k$</code> - The order of a primitive Dirichlet character <code>$\chi$</code></li>
+<li><code>$\mathfrak{f}_\chi$</code> - The conductor of <code>$\chi$</code></li>
+<li><code>$r_\chi$</code> - The label of <code>$\chi$</code> defined as below</li>
+<li><code>$L(E,1,\chi)$</code> - The central value of <code>$L(E, s, \chi)$</code></li>
+<li><code>$\tau(\chi)$</code> - The Gauss sum of <code>$\chi$</code></li>
+<li><code>$e_\chi(N)$</code> -</li>
+<li><code>$c$</code> - The least positive integer with <code>$\chi(c)$</code> is a primitive <code>$k$</code>-th root of unity</li>
+<li><code>$e_\chi(c)$</code> -</li>
+<li><code>$e_\chi(-1)$</code> -</li>
+<li><code>$T_\chi$</code> - The number of terms computed for the value <code>$L(E,1,\chi)$</code> within our desired precision</li>
+</ul>
 <p>To see the whole data at once, go to <a href="https://1drv.ms/u/s!Av11FLupnMROaiYHC7DplK6veXg?e=di8vZq">my cloud storage directory</a> in Microsoft OneDrive.
-In that directory, each sobj file name has the format: <code>$N$</code>_<code>$k$</code>_<code>$X$</code>_raw.sobj where <code>$X = $</code> 3m (or 1m) for <code>$3\cdot 10^6$</code> (or <code>$10^6$</code>), repectively.</p>
+In that directory, each sobj file name has the format: x_y_z_raw.sobj where</p>
+<ul>
+<li>x - The Cremona label of <code>$E$</code></li>
+<li>y - <code>$k$</code></li>
+<li>z - 3m (or 1m) for <code>$3\cdot 10^6$</code> (or <code>$10^6$</code>) repectively</li>
+</ul>
 
 </main>
 
