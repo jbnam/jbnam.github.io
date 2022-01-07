@@ -1,0 +1,22 @@
+---
+title: Number Theoretic Database for Twists and others
+author: Jungbae Nam
+---
+
+<!--[<img src="https://simpleicons.org/icons/github.svg" style="max-width:15%;min-width:40px;float:right;" alt="Github repo" />](https://github.com/yihui/hugo-xmin)-->
+
+### Number Theoretic Database for Twists and others
+
+<!--## Jungbae Nam-->
+
+My name is Jungbae Nam. This site is dedicated to my research works including the collection of data of the central values of `$L$`-functions of elliptic curves twisted by families of Dirichlet characters of some fixed orders that I have been computing since the COVID-19 pandemic.
+
+Let `$E$` be an elliptic curve defined over `$\mathbb{Q}$` of conductor `$N$`. Then, the (Hasse-Weil) `$L$`-function of an elliptic curve `$E$` twisted by a Dirichlet character `$\chi$` is defined by the following Dirichlet series for `$\text{Re}(s) > 3/2$`:
+`$$L(E, s, \chi) := \sum_{n \ge 1}\frac{\chi(n)a_n}{n^s} = \prod_{p \nmid N}\Big(1 - \frac{\chi(p)a_p}{p^s} + \frac{\chi^2(p)}{p^{2s-1}}\Big)^{-1}\prod_{p \mid N}\Big(1 - \frac{\chi(p)a_p}{p^s}\Big)^{-1}$$`
+where `$a_p$` is the traces of Frobenius of `$E$` if `$p \nmid N$` and `$0, \pm 1$` depending on the reduction type of `$E$` modulo `$p$` otherwise. It is well-known that it can be analytically continued to `$\mathbb{C}$` and satisfies some functional equation which relates `$s$` to `$2-s$`, so that the critical strip is `$\{s \in \mathbb{C} \mid 1/2 < \text{Re}(s) < 3/2\}$`. 
+
+Section [Database](/database/) in this site contains some arithmetic values including `$L(E, 1, \chi)$` and their algebraic parts for the families of primitive Dirichlet characters of order 
+`$$k = 3, 5, 6, 7, 13$$` 
+whose conductors are coprime to `$N$` and up to `$3\cdot 10^6$` for `$k = 3, 5, 7, 13$` and `$10^6$` for `$k = 6$`. All the values of the data in [Database](/database/) are computed by using [FLINT](https://www.flintlib.org/), [PARI/GP](https://pari.math.u-bordeaux.fr/) and [CUDA](https://developer.nvidia.com/cuda-zone) for high performance computings. The data type is the Sage object file (i.e. .sobj). Thus, one may need to run [SageMath](https://www.sagemath.org/) in order to read it. For more detailed information about the database, visit Section [Database](/database/).  
+
+[PARI/GP](https://pari.math.u-bordeaux.fr/)

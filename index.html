@@ -30,15 +30,18 @@
 
 
 <!--[<img src="https://simpleicons.org/icons/github.svg" style="max-width:15%;min-width:40px;float:right;" alt="Github repo" />](https://github.com/yihui/hugo-xmin)-->
-<h3 id="number-theoretic-database-for-twists-and-others">Number Theoretic Database for Twists and others</h3>
+<h3 id="number-theoretic-database-for-twists">Number Theoretic Database for Twists</h3>
 <!--## Jungbae Nam-->
-<p>My name is Jungbae Nam. This site is dedicated to my research works including the collection of data of the central values of <code>$L$</code>-functions of elliptic curves twisted by families of Dirichlet characters of some fixed orders that I have been computing since the COVID-19 pandemic.</p>
-<p>Let <code>$E$</code> be an elliptic curve defined over <code>$\mathbb{Q}$</code> of conductor <code>$N$</code>. Then, the (Hasse-Weil) <code>$L$</code>-function of an elliptic curve <code>$E$</code> twisted by a Dirichlet character <code>$\chi$</code> is defined by the following Dirichlet series for <code>$\text{Re}(s) &gt; 3/2$</code>:
-<code>$$L(E, s, \chi) := \sum_{n \ge 1}\frac{\chi(n)a_n}{n^s} = \prod_{p \nmid N}\Big(1 - \frac{\chi(p)a_p}{p^s} + \frac{\chi^2(p)}{p^{2s-1}}\Big)^{-1}\prod_{p \mid N}\Big(1 - \frac{\chi(p)a_p}{p^s}\Big)^{-1}$$</code>
-where <code>$a_p$</code> is the traces of Frobenius of <code>$E$</code> if <code>$p \nmid N$</code> and <code>$0, \pm 1$</code> depending on the reduction type of <code>$E$</code> modulo <code>$p$</code> otherwise. It is well-known that it can be analytically continued to <code>$\mathbb{C}$</code> and satisfies some functional equation which relates <code>$s$</code> to <code>$2-s$</code>, so that the critical strip is <code>$\{s \in \mathbb{C} \mid 1/2 &lt; \text{Re}(s) &lt; 3/2\}$</code>.</p>
-<p>Section <a href="/database/">Database</a> in this site contains <code>$L(E, 1, \chi)$</code> and <code>$\tau(\chi)$</code> for the families of primitive Dirichlet characters of order
-<code>$$k = 3, 5, 6, 7, 13$$</code>
-whose conductors are coprime to <code>$N$</code> and up to <code>$3\cdot 10^6$</code> for <code>$k = 3, 5, 7, 13$</code> and <code>$10^6$</code> for <code>$k = 6$</code>. All the values of the data in <a href="/database/">Database</a> are computed by using <a href="https://www.flintlib.org/">FLINT</a>, <a href="https://pari.math.u-bordeaux.fr/">PARI/GP</a> and <a href="https://developer.nvidia.com/cuda-zone">CUDA</a> for high performance computings. The data type is the Sage object file (i.e. .sobj). Thus, one may need to run <a href="https://www.sagemath.org/">SageMath</a> in order to read it. For more detailed information about the database, visit Section <a href="/database/">Database</a>.</p>
+<p>My name is Jungbae Nam. This site is dedicated to my research works for computational number theory including the collections of the central and algebraic values of (Hasse-Weil) <code>$L$</code>-functions <code>$L(E, s, \chi)$</code> of elliptic curves twisted by families of primitive Dirichlet characters of some fixed orders that I have been computing since the COVID-19 pandemic.</p>
+<p><a href="/database/">Database</a> in this site contains two collections of data:</p>
+<ol>
+<li>The central values <code>$L(E, 1, \chi)$</code> and some values associated with characters <code>$\chi$</code></li>
+<li>The algebraic values of those central <code>$L$</code>-values including their algebraic parts and norms, which were used for <a href="#reference">[1]</a>.</li>
+</ol>
+<p>For more detailed information about the database, visit <a href="/database/">Database</a>.</p>
+<p>If you have a comment/question regarding this database, please feel free to contact me at <a href="mailto:x.y@concordia.ca">x.y@concordia.ca</a> or <a href="mailto:x.y@gmail.com">x.y@gmail.com</a> where x and y are my first and last name respectively.</p>
+<h3 id="a-idreferencea-reference"><a id="reference"></a> Reference</h3>
+<p>[1] <a href="https://www.concordia.ca/artsci/math-stats/faculty.html?fpid=hershy-kisilevsky">Hershy Kisilevsky</a> and <a href="https://jbnam.github.io/">Jungbae Nam</a>. <em>Small Algebraic Central Values of Twists of Elliptic <code>$L$</code>-Functions</em>, 2021 (<a href="https://arxiv.org/abs/2001.03547">Preprint</a>)</p>
 
 
 <ul>
@@ -55,7 +58,7 @@ whose conductors are coprime to <code>$N$</code> and up to <code>$3\cdot 10^6$</
 
   
   <hr/>
-  © <a href="https://jbnam.github.io">Jungbae Nam</a> 2021
+  © <a href="https://jbnam.github.io">Jungbae Nam</a> 2022
   
   </footer>
   </body>
