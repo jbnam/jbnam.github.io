@@ -48,21 +48,21 @@
 </li>
 </ul>
 <h2>1) Introduction</h2>
-<p>Let $\mathcal B_k$ be the family of primitive Dirichlet characters of order $k$ and define</p>
+<p>Let `$\mathcal B_k$` be the family of primitive Dirichlet characters of order `$k$` and define</p>
 <p>$$
 \mathcal B_{k,N}(X) = \lbrace \chi \in \mathcal B_k \mid \mathfrak f_{\chi} \leq X \text{ and } \text{gcd} ( N, \mathfrak{f}_\chi )=1 \rbrace
 $$</p>
-<p>where $\text{gcd}$ is the greatest common divisor function and $\mathfrak{f}_\chi$ is the conductor of $\chi$. Moreover, denote $\zeta_k := e^{2 \pi i/k}$ and $Z_k := \big[0, \zeta_k, \zeta_k^2, \ldots, \zeta_k^{k-1}, 1\big]$ for a fixed $k$.</p>
-<p>Let $E$ be an elliptic curve defined over $\mathbb{Q}$ of conductor $N$. Then, the $L$-function of an elliptic curve $E$ twisted by $\chi$ is defined by the following Dirichlet series for $\text{Re}(s) &gt; 3/2$:</p>
+<p>where `$\text{gcd}$` is the greatest common divisor function and `$\mathfrak{f}_\chi$` is the conductor of `$\chi$`. Moreover, denote `$\zeta_k := e^{2 \pi i/k}$` and `$Z_k := \big[0, \zeta_k, \zeta_k^2, \ldots, \zeta_k^{k-1}, 1\big]$` for a fixed `$k$`.</p>
+<p>Let `$E$` be an elliptic curve defined over `$\mathbb{Q}$` of conductor `$N$`. Then, the `$L$`-function of an elliptic curve `$E$` twisted by `$\chi$` is defined by the following Dirichlet series for `$\text{Re}(s) < 3/2$`:</p>
 <p>$$
 L(E, s, \chi) := \sum_{n \ge 1}\frac{\chi(n)a_n}{n^s} = \prod_{p \nmid N}\Big(1 - \frac{\chi(p)a_p}{p^s} + \frac{\chi^2(p)}{p^{2s-1}}\Big)^{-1}\prod_{p \mid N}\Big(1 - \frac{\chi(p)a_p}{p^s}\Big)^{-1}
 $$</p>
-<p>where $a_p$ is the traces of Frobenius of $E$ if $p \nmid N$ and $0, \pm 1$ depending on the reduction type of $E$ modulo $p$ otherwise. It is well-known that it can be analytically continued to $\mathbb{C}$ and satisfies some functional equation which relates $s$ to $2-s$, so that the critical strip is ${s \in \mathbb{C} \mid 1/2 &lt; \text{Re}(s) &lt; 3/2}$.</p>
-<p>We can compute the values of $L(E, s, \chi)$ at $s = 1$ for $\chi \in \mathcal B_{k,N}(X)$ by the following well-known formula:</p>
+<p>where `$a_p$` is the traces of Frobenius of `$E$` if `$p \nmid N$` and `$0, \pm 1$` depending on the reduction type of `$E$` modulo `$p$` otherwise. It is well-known that it can be analytically continued to `$\mathbb{C}$` and satisfies some functional equation which relates `$s$` to `$2-s$`, so that the critical strip is `${s \in \mathbb{C} \mid 1/2 \le \text{Re}(s) \le 3/2}$`.</p>
+<p>We can compute the values of `$L(E, s, \chi)$` at` $s = 1$` for `$\chi \in \mathcal B_{k,N}(X)$` by the following well-known formula:</p>
 <p>$$
 L(E, 1, \chi) = \sum_{n \ge 1}(\chi(n) + w_E C_\chi\overline{\chi}(n))\frac{a_n}{n}\text{exp} (-2\pi n/(\mathfrak f_\chi \sqrt{N}) ) \qquad\qquad(1)
 $$</p>
-<p>where $a_n$ and $w_E$ are the coefficients and the root number of $L(E, s)$, respectively, and $C_{\chi} = \chi(N) \tau^2(\chi)/\mathfrak{f}_\chi$ where $\tau(\chi)$ is the Gauss sum of $\chi$. Here $\overline{\chi}$ is the complex conjugate of $\chi$ and $\text{exp}$ is the exponential function.</p>
+<p>where `$a_n$` and `$w_E$` are the coefficients and the root number of `$L(E, s)$`, respectively, and `$C_{\chi} = \chi(N) \tau^2(\chi)/\mathfrak{f}_\chi$` where `$\tau(\chi)$` is the Gauss sum of `$\chi$`. Here `$\overline{\chi}$` is the complex conjugate of `$\chi$` and `$\text{exp}$` is the exponential function.</p>
 <p>The algebraic part of $L(E,1,\chi)$ is defined as</p>
 <p>$$
 L_E^{\text{alg}}(\chi) = \frac{2\tau(\overline{\chi})}{\Omega_\chi}L(E,1,\chi)
