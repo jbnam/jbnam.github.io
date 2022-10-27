@@ -32,19 +32,283 @@
 
 
 <main>
-<p>Let <code>$E$</code> be an elliptic curve defined over <code>$\mathbb{Q}$</code> of conductor <code>$N$</code> and <code>$\chi$</code> be a Dirichlet character. Then, the <code>$L$</code>-function of an elliptic curve <code>$E$</code> twisted by <code>$\chi$</code> is defined by the following Dirichlet series for <code>$\text{Re}(s) &gt; 3/2$</code>:
-<code>$$L(E, s, \chi) := \sum_{n \ge 1}\frac{\chi(n)a_n}{n^s} = \prod_{p \nmid N}\Big(1 - \frac{\chi(p)a_p}{p^s} + \frac{\chi^2(p)}{p^{2s-1}}\Big)^{-1}\prod_{p \mid N}\Big(1 - \frac{\chi(p)a_p}{p^s}\Big)^{-1}$$</code>
-where <code>$a_p$</code> is the traces of Frobenius of <code>$E$</code> if <code>$p \nmid N$</code> and <code>$0, \pm 1$</code> depending on the reduction type of <code>$E$</code> modulo <code>$p$</code> otherwise. It is well-known that it can be analytically continued to <code>$\mathbb{C}$</code> and satisfies some functional equation which relates <code>$s$</code> to <code>$2-s$</code>, so that the critical strip is <code>$\{s \in \mathbb{C} \mid 1/2 &lt; \text{Re}(s) &lt; 3/2\}$</code>.</p>
-<p>The database contains some arithmetic values including <code>$L(E, 1, \chi)$</code> and their algebraic parts for the families of primitive Dirichlet characters of order <code>$k = 3, 5, 6, 7, 13$</code> whose conductors are coprime to <code>$N$</code> and up to <code>$3\cdot 10^6$</code> for <code>$k = 3, 5, 7, 13$</code> and <code>$10^6$</code> for <code>$k = 6$</code>. The values of <code>$L(E, 1, \chi)$</code> in <a href="/database/">Database</a> are computed by a program written by C using <a href="https://www.flintlib.org/">FLINT</a> and <a href="https://developer.nvidia.com/cuda-zone">CUDA</a> for high performance computings with a large number of <code>$a_n$</code>&rsquo;s precomputed by <a href="https://pari.math.u-bordeaux.fr/">PARI/GP</a>. Moreover, their algebraic values are computed by <a href="https://www.sagemath.org/">SageMath</a>.</p>
+<h1>twists</h1>
+<p>This repository contains the source codes for computing the central $L$-values of $L$-functions of elliptic curves twisted by a family of primitive Dirichlet characters and their algebraic parts and integer values. More precisely, it contains the sources codes of two main programs:</p>
+<ul>
+<li>twists_clve</li>
+<li>twists_ailve</li>
+</ul>
+<p>The information about the sample data produced by the programs is also provided.</p>
+<p>The author: Jungbae Nam (aka JB)</p>
+<p>For information about the author, visit his personal website (<a href="https://jbnam.github.io/">https://jbnam.github.io/</a>).</p>
+<p>If you have a comment/question regarding this codes package and the sample data set, please feel free to contact me at <a href="mailto:x.y@gmail.com">x.y@gmail.com</a> or <a href="mailto:x.y@concordia.ca">x.y@concordia.ca</a> where x and y are my first and last name respectively.</p>
+<h2>Download Links for Source Codes and Sample Data</h2>
+<ul>
+<li>Source codes links: The author's GitHub site (<a href="https://github.com/jbnam/twists/">https://github.com/jbnam/twists/</a>) or Zenodo archive site</li>
+<li>Sample data link: The author's Zenodo archive site <a href="https://doi.org/10.5281/zenodo.7255396"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7255396.svg" alt="DOI" /></a>
+</li>
+</ul>
+<h2>1) Introduction</h2>
+<p>Let $\mathcal B_k$ be the family of primitive Dirichlet characters of order $k$ and define</p>
+<p>$$
+\mathcal B_{k,N}(X) = \lbrace \chi \in \mathcal B_k \mid \mathfrak f_{\chi} \leq X \text{ and } \text{gcd} ( N, \mathfrak{f}_\chi )=1 \rbrace
+$$</p>
+<p>where $\text{gcd}$ is the greatest common divisor function and $\mathfrak{f}_\chi$ is the conductor of $\chi$. Moreover, denote $\zeta_k := e^{2 \pi i/k}$ and $Z_k := \big[0, \zeta_k, \zeta_k^2, \ldots, \zeta_k^{k-1}, 1\big]$ for a fixed $k$.</p>
+<p>Let $E$ be an elliptic curve defined over $\mathbb{Q}$ of conductor $N$. Then, the $L$-function of an elliptic curve $E$ twisted by $\chi$ is defined by the following Dirichlet series for $\text{Re}(s) &gt; 3/2$:</p>
+<p>$$
+L(E, s, \chi) := \sum_{n \ge 1}\frac{\chi(n)a_n}{n^s} = \prod_{p \nmid N}\Big(1 - \frac{\chi(p)a_p}{p^s} + \frac{\chi^2(p)}{p^{2s-1}}\Big)^{-1}\prod_{p \mid N}\Big(1 - \frac{\chi(p)a_p}{p^s}\Big)^{-1}
+$$</p>
+<p>where $a_p$ is the traces of Frobenius of $E$ if $p \nmid N$ and $0, \pm 1$ depending on the reduction type of $E$ modulo $p$ otherwise. It is well-known that it can be analytically continued to $\mathbb{C}$ and satisfies some functional equation which relates $s$ to $2-s$, so that the critical strip is ${s \in \mathbb{C} \mid 1/2 &lt; \text{Re}(s) &lt; 3/2}$.</p>
+<p>We can compute the values of $L(E, s, \chi)$ at $s = 1$ for $\chi \in \mathcal B_{k,N}(X)$ by the following well-known formula:</p>
+<p>$$
+L(E, 1, \chi) = \sum_{n \ge 1}(\chi(n) + w_E C_\chi\overline{\chi}(n))\frac{a_n}{n}\text{exp} (-2\pi n/(\mathfrak f_\chi \sqrt{N}) ) \qquad\qquad(1)
+$$</p>
+<p>where $a_n$ and $w_E$ are the coefficients and the root number of $L(E, s)$, respectively, and $C_{\chi} = \chi(N) \tau^2(\chi)/\mathfrak{f}_\chi$ where $\tau(\chi)$ is the Gauss sum of $\chi$. Here $\overline{\chi}$ is the complex conjugate of $\chi$ and $\text{exp}$ is the exponential function.</p>
+<p>The algebraic part of $L(E,1,\chi)$ is defined as</p>
+<p>$$
+L_E^{\text{alg}}(\chi) = \frac{2\tau(\overline{\chi})}{\Omega_\chi}L(E,1,\chi)
+$$</p>
+<p>where  $\tau(\chi)$ is the Gauss sum of $\chi$ and $\Omega_\chi = \Omega^{\pm}$ is a period df $E$ depending on the signs of $\chi$. It is known that the algebraic part is an algebraic integer in the cyclotomic field $\mathbb{Q}(\chi)$ adjoining with the values of $\chi$.</p>
+<p>Denote the maximal real subfield of  $\mathbb{Q}(\chi)$ and its ring of integers by $\mathbb{Q}^+(\chi)$ and $\mathcal O_\chi^+$, respectively. Then, from Proposition 2.1 in <a href="#reference">[1]</a>, for each $L_E^\text{alg}(\chi)$, we can find a real cyclotomic integer $\alpha_\chi \in \mathcal O_\chi^+$ satisfying $\sigma(\alpha_\chi) = \alpha_\chi^\sigma$ for all $\sigma \in \text{G}$, the Galois group of $\mathbb{Q}(\chi)/\mathbb{Q}$. Lastly, denote</p>
+<p>$$
+A_\chi = \text{Nm}_{\mathbb{Q}^+(\chi)/\mathbb{Q}} \in \mathbb{Z}
+$$</p>
+<p>where $\text{Nm}$ from $\mathbb Q^+(\chi)$ to $\mathbb Q$ is the field norm.</p>
+<p>Notes:</p>
+<ul>
+<li>The twists package uses the label of $E$ as the Cremona's elliptic curve label.</li>
+<li>In computing $L_E^{\text{alg}}(\chi)$, the period lattice $\Omega^\pm$ is computed such that $\Omega^+ \in \mathbb R$ and $\Omega^- \in \mathbb R i$.</li>
+</ul>
+<p>[1] <a href="https://www.concordia.ca/artsci/math-stats/faculty.html?fpid=hershy-kisilevsky">Hershy Kisilevsky</a> and <a href="https://jbnam.github.io/">Jungbae Nam</a>. <em>Small Algebraic Central Values of Twists of Elliptic L-Functions</em>, 2022 (<a href="https://arxiv.org/abs/2001.03547">Preprint</a>)</p>
+<h2>2) Data Conversion and Sample Data Archived</h2>
+<p>Considering the cloud storage limit of Zenodo, the raw output data obtained by twists_clve are converted into Python compatible data format using Numpy and stored into Zenodo. Thus, one is recommended to use twists_ailve on SageMath to read these sample data in Zenodo. The sample data can be downloaded from the author's Zenodo dataset archive.</p>
+<p>The hardware systems for obtaining these sample data are</p>
+<ul>
+<li>OS: Rocky Linux 8.6 with 64 bit support</li>
+<li>Memory: 32 GB</li>
+<li>CPU: Intel® Core™ i7-6700 CPU @ 3.40GHz × 8</li>
+<li>GPU: NVIDIA GeForce ® GTX 1080 Ti</li>
+</ul>
+<p>For the sample data in Zenodo, we compute $L(E, 1, \chi)$ with a massive amount of precomputed $a_n$'s (as will be mentioned below in more detail) so that the errors of its real and imaginary part are at most $10^{-10}$. It implies that the values of $\alpha_\chi \in \mathbb R$ have at least correct first 4 digits.</p>
+<p>Data file naming convensions for the sample data are</p>
+<ul>
+<li>Raw data file generated by twists_clve: E_k_X_raw.dat
+where
+<ul>
+<li>E - The Cremona label of $E$</li>
+<li>k - The order of $\chi \in \mathcal{B}_{k,N}(X)$</li>
+<li>X - 3m and 1m for $k = 3, 5, 7, 13$ and $k = 6$, respectively</li>
+</ul>
+</li>
+<li>Python data file equivalently converted from the raw one: E_k_X_central_l_values.npz<br />
+where E, k, and X are same as above.</li>
+<li>Python data file for algebraic and integer $L$-values: E_k_X_alg_int_l_values.zip<br />
+where E, k, and X are same as above.</li>
+</ul>
+<p>Note: If a data file contains X = 3m (or 1m) in its name, it means the data contains the $L$-values for $\chi$ of conductor less than or equal to $3\cdot 10^6$ (or $10^6$, respectively).</p>
+<p>In Zenodo <a href="https://doi.org/10.5281/zenodo.7255396"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7255396.svg" alt="DOI" /></a>:</p>
+<p>One can find two zip files: twists_clve_data.zip (17 GB) and twists_ailve_data.zip (13 GB). twists_clve_data.zip and twists_ailve_data.zip contain the E_k_X_central_l_values.npz files and E_k_X_alg_int_l_values.zip files, respectively, with some natural directory structure for k = $3, 5, 6, 7, 13$ and the following elliptic curves E:</p>
+<pre><code>11a1, 14a1, 15a1, 17a1, 19a1, 20a1, 21a1, 24a1, 26a1, 26b1, 27a1, 30a1, 32a1, 33a1, 34a1, 35a1, 
+36a1, 37a1, 37b1, 38a1, 38b1, 39a1, 40a1, 42a1, 43a1, 44a1, 45a1, 46a1, 48a1, 49a1, 50a1, 50b1, 
+51a1, 52a1, 53a1, 54a1, 54b1, 55a1, 56a1, 57a1, 57b1, 57c1, 58a1, 58b1, 61a1, 62a1, 63a1, 64a1, 
+65a1, 66a1, 66b1, 66c1, 67a1, 69a1, 70a1, 72a1, 73a1, 75a1, 75b1, 75c1, 76a1, 77a1, 77b1, 77c1, 
+78a1, 79a1, 80a1, 80b1, 82a1, 83a1, 84a1, 84b1, 85a1, 88a1, 89a1, 89b1, 90a1, 90b1, 90c1, 91a1, 
+91b1, 92a1, 92b1, 94a1, 96a1, 96b1, 98a1, 99a1, 99b1, 99c1, 99d1
+</code></pre>
+<p>One can unzip them on your local system and read the data directly with twists_ailve on SageMath.</p>
+<h2>3) twists_clve</h2>
+<p>twists_clve is a command line program written in C/C++ and CUDA for computing and store the values of $L(E, 1, \chi)$ for $\mathcal B_{k,N}(X)$ and some other number theoretic values related with them. For a fixed $E$ and $k$, when $X$ gets large, the computations for obtainig the values of $L(E, 1, \chi)$ demand massive computaional power.</p>
+<p>Interestingly, one of the ways to achieve the goal is to use a General Purpose Graphic Processing Units (GPGPU). CUDA is one of those in the present time. For a practical example, for $X$ is a couple of millions and CUDA GPU with around 3000 cores, the total computational time can be reduced by a couple of thousand times faster than using one core of CPU.</p>
+<h3>System and Libraries Requirements</h3>
+<h4>Hardwares and Operating System:</h4>
+<ul>
+<li>Any OS supported by the following compilers and libraries with memory capacity larger than 10 GB</li>
+<li>A graphics processing unit supporting CUDA driver ver. 11.4 or later and capability ver. 6.1 or later with global memory capacity larger than 10 GB</li>
+</ul>
+<h4>Compilers for Building:</h4>
+<ul>
+<li>gcc(the GNU Compiler Collection) ver. 2.96 or later (<a href="https://gcc.gnu.org/">https://gcc.gnu.org/</a>)</li>
+<li>nvcc(Nvidia CUDA Compiler) ver. 11.4 or later (<a href="https://developer.nvidia.com/">https://developer.nvidia.com/</a>)</li>
+</ul>
+<h4>External Libraries:</h4>
+<ul>
+<li>FLINT(Fast Library for Number Theory) ver. 2.0 or later (<a href="https://flintlib.org/">https://flintlib.org/</a>)</li>
+<li>GMP(The GNU Multiple Precision Arithmetic Library) ver. 5.1.1 or later (<a href="https://gmplib.org/">https://gmplib.org/</a>)</li>
+</ul>
+<h4>Other Tools:</h4>
+<ul>
+<li>Pari/GP ver. 2 or later (<a href="https://pari.math.u-bordeaux.fr/">https://pari.math.u-bordeaux.fr/</a>)</li>
+<li>CUDA samples ver. 11.4 or later (<a href="https://github.com/NVIDIA/cuda-samples/">https://github.com/NVIDIA/cuda-samples/</a>)</li>
+</ul>
+<p>Note: For more detailed requirements of compilers and external libraries above, consult their websites.</p>
+<h3>Instructions for Configuring and Building twists_clve</h3>
+<ol>
+<li>Download the twists package and unzip it on your working directory.</li>
+<li>Check the requirements above for your systems:
+<ul>
+<li>One can check his/her GPU hardware specifications by building and running &quot;/Samples/1_Utilities/deviceQuery&quot; of the CUDA samples package installed. Refer to deviceQuery_output.txt in the twists package as an example.</li>
+<li>The Makefile is written under the assumptions that FLINT and GMP are installed as shared libraries.</li>
+<li>Make sure that helper_cuda.h and helper_string.h, originally located under the directory of /common/ of the CUDA samples package, can be found in an implementation-defined directory by nvcc.</li>
+</ul>
+</li>
+<li>Run Makefile in twists_clve directory by &quot;make&quot; or &quot;make all&quot;.</li>
+</ol>
+<h3>Instructions for Running twists_clve</h3>
 <ol>
 <li>
-<p>For the overview of computations of <code>$L(E, 1, \chi)$</code> and access to the data, go to <a href="/central_l_values">Central <code>$L$</code>-values</a>.</p>
+<p>Compute and save the coefficients $a_n$ starting from $n = 1$ of $L(E, s, \chi)$ using Pari/GP as shown the following example GP code: for $E$: 11a1 and $n \le 10^6$ as an example,</p>
+<pre><code>? default(parisizemax,&quot;20000M&quot;)
+***   Warning: new maximum stack size = 20000002048 (19073.488 Mbytes).
+?default(primelimit, &quot;200000000&quot;)
+? le = [&quot;11a1&quot;]
+%2 = [&quot;11a1&quot;]
+? {for(j=1,length(le),E=ellinit(le[j]);van=ellan(E,10^8);
+    fraw=fileopen(concat(concat(&quot;./&quot;,le[j]),&quot;an_100m.data&quot;),&quot;w&quot;);
+    for(k=1,length(van),filewrite(fraw,van[k]););
+     fileclose(fraw);
+    kill(van);
+    print(le[j]);
+  );}
+*** ellan: Warning: increasing stack size to 16000000.
+*** ellan: Warning: increasing stack size to 32000000.
+*** ellan: Warning: increasing stack size to 64000000.
+*** ellan: Warning: increasing stack size to 128000000.
+*** ellan: Warning: increasing stack size to 256000000.
+*** ellan: Warning: increasing stack size to 512000000.
+*** ellan: Warning: increasing stack size to 1024000000.
+11a1
+?
+</code></pre>
+<p>Note: For computing $L(E, 1, \chi)$ within a desired precision, firstly one needs to compute the number of $a_n$'s depending on $N$ and $\mathfrak{f}_\chi$. The formula to compute it can be easily derived from Equation (1) and can be found in the definition of function twists_num_terms in source/twists_dirichlet_character/twists_dirichlet_character.c.</p>
 </li>
 <li>
-<p>For the overview of their algebraic values and access to the data, go to <a href="/algebraic_values/">Algebraic Values</a>.</p>
+<p>Assume that with the data &quot;A&quot; of $a_n$ for $E$ of conductor &quot;N&quot; and root number &quot;W&quot; one wants to compute $L(E, 1, \chi)$ for the primitive Dirichlet characters of order &quot;K&quot; and conductor between &quot;C1&quot; and &quot;C2&quot; and save those in the output data &quot;L&quot;.</p>
+<p>Then, run twists_clve with the following arguments as: twists_clve N W K C1 C2 A L</p>
+<p>For $E$: 11a1 as an example,</p>
+<pre><code>[@twists_clve]$ ./twists_clve 11 1 3 2 10000 ./an.data ./output.dat
+The length of a_n is 100000001
+a_n are loaded into device!
+Twists for N = 11, k = 3, kinv = 0.33333333333333331, zeta_k = -0.50000000000000022 + 0.86602540378443849*I
+Done for f &lt; 99. tw.num_chi: 32
+Done for f &lt; 198. tw.num_chi: 62
+    :
+    :
+Done for f &lt; 9999. tw.num_chi: 3184
+The computations are all done. Max stream idx = 31
+cpu = 5547 ms wall = 5566 ms
+[@twists_clve]$
+</code></pre>
 </li>
 </ol>
-<p><strong>HOW TO READ THE DATA FILES</strong>: The data file type is the Sage object file (i.e. .sobj). Thus, one may need to run <a href="https://www.sagemath.org/">SageMath</a> to read it.</p>
+<h3>Output Data</h3>
+<p>The output data consist of the tuples of following 13 entries:</p>
+<p>$$
+[ N, k, \mathfrak f_\chi, r_\chi, \Re(L), \Im(L), \Re(\tau(\chi)), \Im(\tau(\chi)), e_\chi(N), c, e_\chi(c), e_\chi(-1), T_\chi ]
+$$</p>
+<p>where</p>
+<ul>
+<li>$N$ - The conductor of an elliptic curve $E$ defined over $\mathbb{Q}$</li>
+<li>$k$ - The order of a primitive Dirichlet character $\chi$</li>
+<li>$\mathfrak{f}_\chi$ - The conductor of $\chi$</li>
+<li>$r_\chi$ - The label of $\chi$</li>
+<li>$\Re(L)$ - The real part of $L(E, 1, \chi)$</li>
+<li>$\Im(L)$ - The imaginary part of $L(E, 1, \chi)$</li>
+<li>$\Re(\tau(\chi))$ - The real part of the Gauss sum of $\chi$</li>
+<li>$\Im(\tau(\chi))$ - The imaginary part of the Gauss sum of $\chi$</li>
+<li>$e_\chi(N)$ - Index of $Z_k$ at which the value of $Z_k$ is $\chi(N)$</li>
+<li>$c$ - The least positive integer with $\chi(c)$ is a primitive $k$-th root of unity</li>
+<li>$e_\chi(c)$ - Index of $Z_k$ at which the value of $Z_k$ is $\chi(c)$</li>
+<li>$e_\chi(-1)$ - Index of $Z_k$ at which the value of $Z_k$ is the sign of $\chi$</li>
+<li>$T_\chi$ - The number of terms computed for the value $L(E,1,\chi)$ in Equation (1)</li>
+</ul>
+<p>Note: Even though FLINT and GMP support arbitrary precision integer and float computations, the output float data are of double precision type at most due to the limited support of CUDA.</p>
+<p>For $E$: 11a1 as an example,</p>
+<pre><code>[@twists_clve]$ cat output.dat 
+11, 3, 7, 1, 1.9971068270600856, 1.3284392937855753, 2.3704694055761992, -1.1751062918847859, 1, 2, 2, 3, 6825
+11, 3, 7, 2, 1.9971068270600865, -1.3284392937855733, 2.3704694055761992, 1.1751062918847872, 2, 2, 1, 3, 6825
+    :
+    :
+11, 3, 9997, 3, 0.84765090208809601, -9.1002858592966529, 9.273015315297048, -99.554061629637928, 3, 2, 1, 3, 461435
+11, 3, 9997, 4, 3.96079186956215e-14, -2.7321877339158544e-14, 58.849069303070934, 80.831844233314186, 1, 7, 1, 3, 461435
+[@twists_clve]$
+</code></pre>
+<h2>4) twists_ailve</h2>
+<p>twists_ailve is a SageMath command line program to convert the raw twists_clve data archived in Zenodo and compute the algebraic and integer $L$-values.</p>
+<h3>Requirements</h3>
+<p>SageMath ver. 9.0 or later (<a href="https://www.sagemath.org/">https://www.sagemath.org/</a>)</p>
+<h3>Instructions for Running twists_ailve</h3>
+<ol>
+<li>Open SageMath command line (Optional): any interactive SageMath shell will work.</li>
+<li>Load twists_ailve.sage on SageMath by typing: load('./twists_ailve.sage') for example.</li>
+<li>From a E_k_X_raw.dat, computed by twists_clve, one can create a tw_central_l_values Python class object as
+<pre><code>sage: load('./twists_ailve.sage')
+sage: L = tw_central_l_values.load_from_dat('11a1', 3, './'); print(L[0])
+[11, 3, 7, 1, (1.9971068270600854+1.3284392937855751j), (2.3704694055761992-1.1751062918847859j), 1, 2, 2, 3, 6825]
+</code></pre>
+</li>
+<li>Once a tw_central_l_values class object created, one can save it as a npz (Numpy compressed) file into a path. Then, the npz file is saved in
+<pre><code>sage: L.save_to_npz('./')
+</code></pre>
+</li>
+<li>Similar to Step 3. one can also create a tw_central_l_values Python class object from a E_k_X_central_l_values.npz as below:
+<pre><code>sage: L = tw_central_l_values.load_from_npz('11a1', 3, './'); print(L[0])
+[11, 3, 7, 1, (1.9971068270600854+1.3284392937855751j), (2.3704694055761992-1.1751062918847859j), 1, 2, 2, 3, 6825]
+</code></pre>
+</li>
+<li>Compute the algebraic parts and integer values of $L(E, 1, \chi)$ from a E_k_X_central_l_values.npz as below:
+<pre><code>sage: %time A = tw_alg_int_l_values.load_from_central_l_values_npz('11a1',3,'./')
+CPU times: user 28.8 s, sys: 31.7 ms, total: 28.9 s
+Wall time: 28.9 s
+sage: print(A[0])
+[11, 3, 10, 7, 1, 1, (4.999999999999993+8.660254037844375j), 9.999999999999988, 3, 1]
+</code></pre>
+Note: It takes significantly more time as k increases for each E and X.</li>
+<li>Save the algebraic parts and integer values as a zip file into a path as below:
+<pre><code>sage: A.save_to_zip('./')
+sage:
+</code></pre>
+</li>
+<li>One can also load the tw_alg_int_l_values class object from a E_k_X_alg_int_l_values.zip as below:
+<pre><code>sage: A = tw_alg_int_l_values.load_from_zip('11a1', 3, './'); print(A[0])
+[11, 3, 10, 7, 1, 1, (4.999999999999993+8.660254037844375j), 9.999999999999988, 3, 1]
+</code></pre>
+</li>
+</ol>
+<p>Note: For better loading procedure and storage saving, the tw_central_l_values and tw_alg_int_l_values classes use Numpy for each array element except the A_chi_div_g list of tw_alg_int_l_values class. It is because that the absolute value of an integer element in that list can easily be greater than the maximum allowed for a 64-bit integer (one can find those integer elements for $k = 13$ in the sample data).</p>
+<h3>Class object tw_central_l_values for E_k_X_central_l_values.npz</h3>
+<p>Class tw_central_l_values consists of the following members:</p>
+<ul>
+<li>E - The elliptic curve associated with E_k_X_central_l_values.npz: : SageMath EllipticCurve_rational_field_with_category class</li>
+<li>k - The order of the family of characters associated with E_k_X_central_l_values.npz: Python int</li>
+<li>num_twists - The cardinality of this family: Python int</li>
+<li>X - The maximum conductor in this family: 3 and 1 for $k = 3, 5, 7, 13$ and $k = 6$, respectively: Python int</li>
+<li>chi_cond - Numpy array of $\mathfrak f_\chi$'s: dtype=uint32</li>
+<li>chi_label - Numpy array of $r_\chi$'s: dtype=uint32</li>
+<li>l_value - Numpy array of $L(E, 1, \chi)$'s: dtype=cdouble</li>
+<li>gauss_sum_chi - Numpy array of $\tau(\chi)$'s: dtype=cdouble</li>
+<li>exp_chi_N - Numpy array of $e_\chi(N)$'s: dtype=uint16</li>
+<li>c - Numpy array of $c$'s: dtype=uint32</li>
+<li>exp_chi_c - Numpy array of $e_\chi(c)$'s: dtype=uint16</li>
+<li>exp_sign_chi - Numpy array of $e_\chi(-1)$'s: dtype=uint16</li>
+<li>num_terms - Numpy array of $T_\chi$'s: dtype=uint64</li>
+</ul>
+<h3>Class object  of Algebraic and Integer $L$-values for E_k_X_alg_int_l_values.zip</h3>
+<p>Class tw_alg_int_l_values consists of the following members:</p>
+<ul>
+<li>E - The elliptic curve associated with E_k_X_central_l_values.npz: SageMath EllipticCurve_rational_field_with_category class</li>
+<li>k - The order of the family of characters associated with E_k_X_central_l_values.npz: Python int</li>
+<li>num_twists - The cardinality of this family: Python int</li>
+<li>X - The maximum conductor in this family: 3 and 1 for $k = 3, 5, 7, 13$ and $k = 6$, respectively: Python int</li>
+<li>g - the greatest common divisor of all $A_\chi$'s in $\mathcal{B}_{k,N}(X)$: Python int</li>
+<li>chi_cond - Numpy array of $\mathfrak f_\chi$'s: dtype=uint32</li>
+<li>chi_label - Numpy array of $r_\chi$'s: dtype=uint32</li>
+<li>A_chi_div_g - Numpy array of $A_\chi / g$'s Python int</li>
+<li>alg_part_l - Numpy array of $L_E^{\text{alg}}(\chi)$'s: dtype=cdouble</li>
+<li>alp_chi - Numpy array of $\alpha_\chi$'s: dtype=double</li>
+<li>c - Numpy array of $c$'s: dtype=uint32</li>
+<li>exp_sign_chi - Numpy array of $e_\chi(-1)$'s: dtype=uint16</li>
+<li>exp_chi_minus_N - Numpy array of $e_\chi(-N)$'s: dtype=uint16</li>
+</ul>
 
 </main>
 
